@@ -3,16 +3,17 @@
 Auto horizontal scrolling , You just need wrap the component between `<AutoScrolling>`, it's same like the `marquee` tag in html.
 There was many solutions already, but I prefer this one for the best performance. All animations will be send to native and perform on the UI thread by using `useNativeDriver`
 
-### Properties
+## Installation
 
-| Prop                  | Description                              | Default |
-| --------------------- | ---------------------------------------- | ------- |
-| **`style`**           | Container `View` Style                   | {}      |
-| **`endPaddingWidth`** | The padding width between round          | 100     |
-| **`duration`**        | Time to finish a round(ms).              | \_      |
-| **`delay`**           | Delay time before start auto scroll(ms). | 1000    |
+    npm install --save react-native-auto-scrolling
 
-### Example:
+_or_
+
+    yarn add react-native-auto-scrolling
+
+## Example:
+
+![Auto SCrolling Example](https://github.com/minhtc/react-native-auto-scrolling/raw/master/screenshots/auto-scrolling.gif "Auto Scrolling Example")
 
 source:
 
@@ -71,6 +72,15 @@ const styles = StyleSheet.create({
 });
 ```
 
-output:
+## Properties
 
-![Auto SCrolling Example](https://github.com/minhtc/react-native-auto-scrolling/raw/master/screenshots/auto-scrolling.gif "Auto Scrolling Example")
+| Prop                  | Description                              | Default |
+| --------------------- | ---------------------------------------- | ------- |
+| **`style`**           | Container `View` Style                   | {}      |
+| **`endPaddingWidth`** | The padding width between round          | 100     |
+| **`duration`**        | Time to finish a round(ms).              | \_      |
+| **`delay`**           | Delay time before start auto scroll(ms). | 1000    |
+
+## Question?
+
+minhtcx@gmail.com
