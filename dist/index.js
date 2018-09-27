@@ -53,12 +53,12 @@
             _this.duration = 0;
             _this.delay = 1000;
             var duration = props.duration, delay = props.delay, endPaddingWidth = props.endPaddingWidth;
-            if (duration)
+            if (typeof duration === "number")
                 _this.duration = duration;
-            if (delay)
+            if (typeof delay === "number")
                 _this.delay = delay;
             _this.state = {
-                endPaddingWidth: endPaddingWidth || 100
+                endPaddingWidth: typeof endPaddingWidth === "number" ? endPaddingWidth : 100
             };
             _this.run = _this.run.bind(_this);
             _this.measureContainerView = _this.measureContainerView.bind(_this);

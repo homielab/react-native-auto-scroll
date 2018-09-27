@@ -34,10 +34,11 @@ export default class AutoScrolling extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
     const { duration, delay, endPaddingWidth } = props;
-    if (duration) this.duration = duration;
-    if (delay) this.delay = delay;
+    if (typeof duration === "number") this.duration = duration;
+    if (typeof delay === "number") this.delay = delay;
     this.state = {
-      endPaddingWidth: endPaddingWidth || 100
+      endPaddingWidth:
+        typeof endPaddingWidth === "number" ? endPaddingWidth : 100
     };
     this.run = this.run.bind(this);
     this.measureContainerView = this.measureContainerView.bind(this);

@@ -1,8 +1,8 @@
 {
   "name": "react-native-auto-scrolling",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Auto horizontal scrolling any component",
-  "main": "index.min.js",
+  "main": "dist/index.js",
   "scripts": {
     "build:umd": "cross-env BABEL_ENV=rollup NODE_ENV=development rollup -c -o dist/index.js",
     "build:umd:min": "cross-env BABEL_ENV=rollup NODE_ENV=production rollup -c -o dist/index.min.js",

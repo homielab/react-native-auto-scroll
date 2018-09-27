@@ -1,7 +1,8 @@
 # react-native-auto-scrolling
 
-Auto horizontal scrolling , You just need wrap the component between `<AutoScrolling>`, it's same like the `marquee` tag in html.
-There was many solutions already, but I prefer this one for the best performance. All animations will be send to native and perform on the UI thread by using `useNativeDriver`
+Auto horizontal scrolling , You just need wrap the component between `<AutoScrolling>`, it is the same like `marquee` tag in html.
+
+There are many solutions, but I prefer this one for the best performance. The animations are using `useNativeDriver`, so they will be send to native and will be perform on the UI thread instead of JS thread.
 
 ## Installation
 
@@ -33,11 +34,13 @@ export default class App extends React.Component {
               height: 200,
               borderRadius: 25
             }}
+            delay={0}
+            duration={6000}
             source={require("./merry-christmas-png.png")
           />
         </AutoScrolling>
-        <AutoScrolling style={styles.scrolling2}>
-          <Text style={styles.welcome}>MERRY CHRISTMAS</Text>
+        <AutoScrolling style={styles.scrolling2} endPadding={50}>
+          <Text style={styles.welcome}>MERRY CHRISTMAS AND HAPPY NEW YEAR</Text>
         </AutoScrolling>
       </View>
     );
@@ -74,12 +77,12 @@ const styles = StyleSheet.create({
 
 ## Properties
 
-| Prop                  | Description                              | Default |
-| --------------------- | ---------------------------------------- | ------- |
-| **`style`**           | Container `View` Style                   | {}      |
-| **`endPaddingWidth`** | The padding width between round          | 100     |
-| **`duration`**        | Time to finish a round(ms).              | \_      |
-| **`delay`**           | Delay time before start auto scroll(ms). | 1000    |
+| Prop                  | Description                                         | Default |
+| --------------------- | --------------------------------------------------- | ------- |
+| **`style`**           | `View` style                                        | \_      |
+| **`endPaddingWidth`** | The padding width to next round                     | 100     |
+| **`duration`**        | Time to finish a round (ms).                        | \_      |
+| **`delay`**           | Delay time before start auto scroll animation (ms). | 1000    |
 
 ## Question?
 
