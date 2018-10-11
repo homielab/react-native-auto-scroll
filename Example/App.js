@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Text, View, Image, StyleSheet } from "react-native";
-import AutoScrolling from "./AutoScrolling";
+import AutoScrolling from "react-native-auto-scrolling";
 
 export default class App extends React.Component {
   render() {
