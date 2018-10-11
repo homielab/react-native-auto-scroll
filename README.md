@@ -12,6 +12,15 @@ _or_
 
     yarn add react-native-auto-scrolling
 
+## Properties
+
+| Prop                  | Description                                         | Default |
+| --------------------- | --------------------------------------------------- | ------- |
+| **`style`**           | `View` style                                        | \_      |
+| **`endPaddingWidth`** | The padding width to next round                     | 100     |
+| **`duration`**        | Time to finish a round (ms).                        | \_      |
+| **`delay`**           | Delay time before start auto scroll animation (ms). | 1000    |
+
 ## Example:
 
 ![Auto SCrolling Example](https://github.com/minhtc/react-native-auto-scrolling/raw/master/screenshots/auto-scrolling.gif "Auto Scrolling Example")
@@ -19,9 +28,9 @@ _or_
 source:
 
 ```js
-import React from "react";
-import { StyleSheet, Text, Image, View } from "react-native";
-import AutoScrolling from "react-native-auto-scrolling";
+import * as React from "react";
+import { Text, View, Image, StyleSheet } from "react-native";
+import AutoScrolling from "./AutoScrolling";
 
 export default class App extends React.Component {
   render() {
@@ -29,14 +38,10 @@ export default class App extends React.Component {
       <View style={styles.container}>
         <AutoScrolling style={styles.scrolling1}>
           <Image
-            style={{
-              width: 200,
-              height: 200,
-              borderRadius: 25
-            }}
+            style={styles.image}
             delay={0}
             duration={6000}
-            source={require("./merry-christmas-png.png")
+            source={require("./assets/merry-christmas-png.png")}
           />
         </AutoScrolling>
         <AutoScrolling style={styles.scrolling2} endPadding={50}>
@@ -53,6 +58,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#F5FCFF"
+  },
+  image: {
+    width: 200,
+    height: 200
   },
   scrolling1: {
     width: 400,
@@ -74,15 +83,6 @@ const styles = StyleSheet.create({
   }
 });
 ```
-
-## Properties
-
-| Prop                  | Description                                         | Default |
-| --------------------- | --------------------------------------------------- | ------- |
-| **`style`**           | `View` style                                        | \_      |
-| **`endPaddingWidth`** | The padding width to next round                     | 100     |
-| **`duration`**        | Time to finish a round (ms).                        | \_      |
-| **`delay`**           | Delay time before start auto scroll animation (ms). | 1000    |
 
 ## Question?
 

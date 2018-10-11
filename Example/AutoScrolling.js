@@ -2,36 +2,16 @@
  * @format
  */
 import * as React from "react";
-import {
-  Animated,
-  Easing,
-  ScrollView,
-  StyleSheet,
-  StyleProp,
-  ViewStyle,
-  View
-} from "react-native";
+import { Animated, Easing, ScrollView, StyleSheet, View } from "react-native";
 
-interface Props {
-  children: React.ReactElement<any>;
-  style?: StyleProp<ViewStyle>;
-  endPaddingWidth?: number;
-  duration?: number;
-  delay?: number;
-}
+export default class AutoScrolling extends React.PureComponent {
+  offsetX = new Animated.Value(0);
+  maxOffsetX = 0;
+  duration = 0;
+  delay = 1000;
+  childComponentRef = null;
 
-interface State {
-  endPaddingWidth: number;
-}
-
-export default class AutoScrolling extends React.PureComponent<Props, State> {
-  offsetX: Animated.AnimatedValue = new Animated.Value(0);
-  maxOffsetX: number = 0;
-  duration: number = 0;
-  delay: number = 1000;
-  childComponentRef: any;
-
-  constructor(props: Props) {
+  constructor(props) {
     super(props);
     const { duration, delay, endPaddingWidth } = props;
     if (typeof duration === "number") this.duration = duration;
@@ -56,10 +36,10 @@ export default class AutoScrolling extends React.PureComponent<Props, State> {
     ).start();
   }
 
-  measureContainerView(event: any) {
+  measureContainerView(event) {
     if (this.maxOffsetX !== 0) return;
     const containerWidth = event.nativeEvent.layout.width;
-    this.childComponentRef.measure((fx: number, fy: number, width: number) => {
+    this.childComponentRef.measure((fx, fy, width) => {
       const componentWidth = width;
       let { endPaddingWidth } = this.state;
       if (componentWidth <= containerWidth) {
@@ -82,7 +62,7 @@ export default class AutoScrolling extends React.PureComponent<Props, State> {
     const childrenWithProps = React.cloneElement(children, {
       ...childrenProps,
       style: [childrenProps.style, { marginRight: endPaddingWidth }],
-      ref: (ref: any) => (this.childComponentRef = ref)
+      ref: ref => (this.childComponentRef = ref)
     });
 
     return (
