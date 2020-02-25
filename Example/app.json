@@ -1,11 +1,14 @@
 {
   "expo": {
-    "name": "Example",
-    "description": "This project is really great.",
+    "name": "Blank Template (TypeScript)",
     "slug": "Example",
     "privacy": "public",
-    "sdkVersion": "30.0.0",
-    "platforms": ["ios", "android"],
+    "sdkVersion": "36.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

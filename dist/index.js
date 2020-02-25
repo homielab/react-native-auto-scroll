@@ -1,8 +1,8 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('react'), require('react-native')) :
     typeof define === 'function' && define.amd ? define(['react', 'react-native'], factory) :
-    (global['react-native-auto-scrolling'] = factory(global.React,global.ReactNative));
-}(this, (function (React,reactNative) { 'use strict';
+    (global = global || self, global['react-native-auto-scrolling'] = factory(global.React, global.ReactNative));
+}(this, (function (React, reactNative) { 'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,20 +18,6 @@
     See the Apache Version 2.0 License for specific language governing permissions
     and limitations under the License.
     ***************************************************************************** */
-    /* global Reflect, Promise */
-
-    var extendStatics = function(d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-
-    function __extends(d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    }
 
     var __assign = function() {
         __assign = Object.assign || function __assign(t) {
@@ -44,84 +30,78 @@
         return __assign.apply(this, arguments);
     };
 
-    var AutoScrolling = /** @class */ (function (_super) {
-        __extends(AutoScrolling, _super);
-        function AutoScrolling(props) {
-            var _this = _super.call(this, props) || this;
-            _this.offsetX = new reactNative.Animated.Value(0);
-            _this.maxOffsetX = 0;
-            _this.duration = 0;
-            _this.delay = 1000;
-            var duration = props.duration, delay = props.delay, endPaddingWidth = props.endPaddingWidth;
-            if (typeof duration === "number")
-                _this.duration = duration;
-            if (typeof delay === "number")
-                _this.delay = delay;
-            _this.state = {
-                endPaddingWidth: typeof endPaddingWidth === "number" ? endPaddingWidth : 100
-            };
-            _this.run = _this.run.bind(_this);
-            _this.measureContainerView = _this.measureContainerView.bind(_this);
-            return _this;
+    var AutoScrolling = function (_a) {
+        var style = _a.style,
+            children = _a.children,
+            _b = _a.endPaddingWidth,
+            endPaddingWidth = _b === void 0 ? 100 : _b,
+            duration = _a.duration,
+            _c = _a.delay,
+            delay = _c === void 0 ? 0 : _c;
+        var containerWidth = React.useRef(0);
+        var contentWidth = React.useRef(0);
+        var _d = React.useState(false),
+            isAutoScrolling = _d[0],
+            setIsAutoScrolling = _d[1];
+        var _e = React.useState(endPaddingWidth),
+            dividerWidth = _e[0],
+            setDividerWidth = _e[1];
+        var offsetX = React.useRef(new reactNative.Animated.Value(0));
+        var contentRef;
+        function measureContainerView(event) {
+            var newContainerWidth = event.nativeEvent.layout.width;
+            if (containerWidth.current === newContainerWidth) return;
+            containerWidth.current = newContainerWidth;
+            if (!contentRef) return;
+            contentRef.measure(function (fx, fy, width) {
+                checkContent(width, fx);
+            });
         }
-        AutoScrolling.prototype.run = function () {
-            reactNative.Animated.loop(reactNative.Animated.timing(this.offsetX, {
-                toValue: this.maxOffsetX,
-                duration: this.duration,
-                delay: this.delay,
+        function checkContent(newContentWidth, fx) {
+            if (!newContentWidth) {
+                setIsAutoScrolling(false);
+                return;
+            }
+            if (contentWidth.current === newContentWidth) return;
+            contentWidth.current = newContentWidth;
+            var newDividerWidth = endPaddingWidth;
+            if (contentWidth.current < containerWidth.current) {
+                if (endPaddingWidth < containerWidth.current - contentWidth.current) {
+                    newDividerWidth = containerWidth.current - contentWidth.current;
+                }
+            }
+            setDividerWidth(newDividerWidth);
+            setIsAutoScrolling(true);
+            reactNative.Animated.loop(reactNative.Animated.timing(offsetX.current, {
+                toValue: -(contentWidth.current + fx + newDividerWidth),
+                duration: duration || 50 * contentWidth.current,
+                delay: delay,
                 easing: reactNative.Easing.linear,
                 useNativeDriver: true
             })).start();
-        };
-        AutoScrolling.prototype.measureContainerView = function (event) {
-            var _this = this;
-            if (this.maxOffsetX !== 0)
-                return;
-            var containerWidth = event.nativeEvent.layout.width;
-            this.childComponentRef.measure(function (fx, fy, width) {
-                var componentWidth = width;
-                var endPaddingWidth = _this.state.endPaddingWidth;
-                if (componentWidth <= containerWidth) {
-                    endPaddingWidth = containerWidth - componentWidth;
-                    _this.setState({
-                        endPaddingWidth: endPaddingWidth
-                    });
-                }
-                _this.maxOffsetX = -1 * (componentWidth + endPaddingWidth + fx);
-                if (!_this.duration)
-                    _this.duration = componentWidth * 20;
-                _this.run();
-            });
-        };
-        AutoScrolling.prototype.render = function () {
-            var _this = this;
-            var _a = this.props, children = _a.children, style = _a.style;
-            var endPaddingWidth = this.state.endPaddingWidth;
-            var childrenProps = children.props;
-            var childrenWithProps = React.cloneElement(children, __assign({}, childrenProps, { style: [childrenProps.style, { marginRight: endPaddingWidth }], ref: function (ref) { return (_this.childComponentRef = ref); } }));
-            return (React.createElement(reactNative.View, { style: style },
-                React.createElement(reactNative.ScrollView, { horizontal: true, bounces: false, scrollEnabled: false, onLayout: this.measureContainerView },
-                    React.createElement(reactNative.Animated.View, { style: [
-                            styles.row,
-                            {
-                                transform: [
-                                    {
-                                        translateX: this.offsetX
-                                    }
-                                ]
-                            }
-                        ] },
-                        childrenWithProps,
-                        children))));
-        };
-        return AutoScrolling;
-    }(React.PureComponent));
-    var styles = reactNative.StyleSheet.create({
-        row: {
-            flexDirection: "row"
         }
-    });
+        function measureContentView(event) {
+            var _a = event.nativeEvent.layout,
+                width = _a.width,
+                x = _a.x;
+            if (!containerWidth.current || width === contentWidth.current) return;
+            offsetX.current.stopAnimation();
+            offsetX.current.setValue(0);
+            offsetX.current.setOffset(0);
+            checkContent(width, x);
+        }
+        var childrenProps = children.props;
+        var childrenWithProps = React.cloneElement(children, __assign(__assign({}, childrenProps), { onLayout: measureContentView, ref: function (ref) {
+                return contentRef = ref;
+            } }));
+        return React.createElement(reactNative.View, { onLayout: measureContainerView, style: style }, React.createElement(reactNative.ScrollView, { horizontal: true, bounces: false, scrollEnabled: false, showsHorizontalScrollIndicator: false }, React.createElement(reactNative.Animated.View, { style: {
+                flexDirection: "row",
+                transform: [{ translateX: offsetX.current }]
+            } }, childrenWithProps, isAutoScrolling && React.createElement(reactNative.View, { style: { width: dividerWidth } }), isAutoScrolling && children)));
+    };
+    var index = React.memo(AutoScrolling);
 
-    return AutoScrolling;
+    return index;
 
 })));
+//# sourceMappingURL=index.js.map

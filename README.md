@@ -90,4 +90,6 @@ const styles = StyleSheet.create({
 
 ## Question?
 
-minhtcx@gmail.com
+You are welcome to create new issue 👍🏻
+
+https://github.com/minhtc/react-native-auto-scrolling/issues

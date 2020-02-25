@@ -1,19 +1,21 @@
 {
   "name": "react-native-auto-scrolling",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Auto horizontal scrolling any component",
   "main": "dist/index.js",
   "scripts": {
-    "build:umd": "cross-env BABEL_ENV=rollup NODE_ENV=development rollup -c -o dist/index.js",
-    "build:umd:min": "cross-env BABEL_ENV=rollup NODE_ENV=production rollup -c -o dist/index.min.js",
-    "build": "npm run build:umd && npm run build:umd:min",
+    "build": "rollup -c -o dist/index.js",
     "prepublish": "npm run build",
     "npm:publish": "npm run prepublish && npm publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": {
-    "name": "Minh Tran",
+    "name": "HackerMeo (minhtcx@gmail.com)",
     "url": "https://github.com/minhtc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:minhtc/react-native-auto-scrolling.git"
   },
   "license": "ISC",
   "keywords": [
@@ -26,20 +28,19 @@
     "marquee"
   ],
   "peerDependencies": {
-    "react": "^16.5.0",
-    "react-native": "^0.57.1"
+    "react": "16.9.0",
+    "react-native": "^0.61.5"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.0",
-    "@types/react": "^16.4.14",
-    "@types/react-native": "^0.56.23",
-    "cross-env": "^5.2.0",
-    "rollup": "^0.66.2",
-    "rollup-plugin-babel": "^4.0.3",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-replace": "^2.0.0",
-    "rollup-plugin-typescript2": "^0.17.0",
-    "rollup-plugin-uglify": "^6.0.0",
-    "typescript": "^3.0.3"
+    "@rollup/plugin-node-resolve": "^7.1.1",
+    "@rollup/plugin-replace": "^2.3.1",
+    "@rollup/plugin-typescript": "^3.0.0",
+    "@types/react": "^16.9.22",
+    "@types/react-native": "^0.61.17",
+    "babel-core": "^6.26.3",
+    "rollup": "^1.31.1",
+    "rollup-plugin-babel": "^3.0.7",
+    "tslib": "^1.11.0",
+    "typescript": "^3.8.2"
   }
 }
