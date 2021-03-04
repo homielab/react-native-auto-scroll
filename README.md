@@ -20,6 +20,7 @@ _or_
 | **`endPaddingWidth`** | The padding width to next round                     | 100     |
 | **`duration`**        | Time to finish a round (ms).                        | \_      |
 | **`delay`**           | Delay time before start auto scroll animation (ms). | 1000    |
+| **`isLTR`**           | Is Left to Right?                                   | false   |
 
 ## Example:
 
@@ -61,30 +62,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F5FCFF"
+    backgroundColor: "#F5FCFF",
   },
   image: {
     width: 200,
-    height: 200
+    height: 200,
   },
   scrolling1: {
     width: 400,
     padding: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   scrolling2: {
     backgroundColor: "red",
     width: 400,
     padding: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   welcome: {
     color: "white",
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-    margin: 10
-  }
+    margin: 10,
+  },
 });
 ```
 

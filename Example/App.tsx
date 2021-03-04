@@ -8,21 +8,21 @@ const MSG = [
   "Best wishes on your birthday – may you have many, many more",
   "Wishing you the happiest of birthdays",
   "Best wishes for a fantastic person on your birthday",
-  "I hope you treat yourself to something special on your birthday – you deserve it!"
+  "I hope you treat yourself to something special on your birthday – you deserve it!",
 ];
 
-function getRandomInt(max) {
+function getRandomInt(max: number) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
 export default class App extends React.Component {
   state = {
-    welcomeMsg: MSG[0]
+    welcomeMsg: MSG[0],
   };
 
   updateText = () => {
     this.setState({
-      welcomeMsg: MSG[getRandomInt(5)]
+      welcomeMsg: MSG[getRandomInt(5)],
     });
   };
 
@@ -39,6 +39,9 @@ export default class App extends React.Component {
         <AutoScrolling style={styles.scrolling2}>
           <Text style={styles.welcome}>{welcomeMsg}</Text>
         </AutoScrolling>
+        <AutoScrolling isLTR style={styles.scrolling2}>
+          <Text style={styles.welcome}>{welcomeMsg}</Text>
+        </AutoScrolling>
         <TouchableOpacity onPress={this.updateText} style={styles.button}>
           <Text style={styles.buttonText}>Change Birthday Wish</Text>
         </TouchableOpacity>
@@ -51,35 +54,36 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 200,
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   image: {
     width: 200,
-    height: 200
+    height: 200,
   },
   scrolling1: {
-    marginVertical: 10
+    marginVertical: 10,
   },
   scrolling2: {
     backgroundColor: "red",
     alignItems: "center",
     padding: 20,
-    marginHorizontal: 20
+    marginHorizontal: 20,
+    marginBottom: 20,
   },
   welcome: {
     color: "white",
     fontSize: 20,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   button: {
     margin: 20,
     backgroundColor: "blue",
     justifyContent: "center",
     paddingVertical: 10,
-    borderRadius: 10
+    borderRadius: 10,
   },
   buttonText: {
     color: "white",
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });

@@ -5,18 +5,18 @@
 }(this, (function (React, reactNative) { 'use strict';
 
     /*! *****************************************************************************
-    Copyright (c) Microsoft Corporation. All rights reserved.
-    Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-    this file except in compliance with the License. You may obtain a copy of the
-    License at http://www.apache.org/licenses/LICENSE-2.0
+    Copyright (c) Microsoft Corporation.
 
-    THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-    WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-    MERCHANTABLITY OR NON-INFRINGEMENT.
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted.
 
-    See the Apache Version 2.0 License for specific language governing permissions
-    and limitations under the License.
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+    REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+    LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+    OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+    PERFORMANCE OF THIS SOFTWARE.
     ***************************************************************************** */
 
     var __assign = function() {
@@ -37,15 +37,17 @@
             endPaddingWidth = _b === void 0 ? 100 : _b,
             duration = _a.duration,
             _c = _a.delay,
-            delay = _c === void 0 ? 0 : _c;
+            delay = _c === void 0 ? 0 : _c,
+            _d = _a.isLTR,
+            isLTR = _d === void 0 ? false : _d;
         var containerWidth = React.useRef(0);
         var contentWidth = React.useRef(0);
-        var _d = React.useState(false),
-            isAutoScrolling = _d[0],
-            setIsAutoScrolling = _d[1];
-        var _e = React.useState(endPaddingWidth),
-            dividerWidth = _e[0],
-            setDividerWidth = _e[1];
+        var _e = React.useState(false),
+            isAutoScrolling = _e[0],
+            setIsAutoScrolling = _e[1];
+        var _f = React.useState(endPaddingWidth),
+            dividerWidth = _f[0],
+            setDividerWidth = _f[1];
         var offsetX = React.useRef(new reactNative.Animated.Value(0));
         var contentRef;
         function measureContainerView(event) {
@@ -72,8 +74,11 @@
             }
             setDividerWidth(newDividerWidth);
             setIsAutoScrolling(true);
+            if (isLTR) {
+                offsetX.current.setValue(-(newContentWidth + newDividerWidth));
+            }
             reactNative.Animated.loop(reactNative.Animated.timing(offsetX.current, {
-                toValue: -(contentWidth.current + fx + newDividerWidth),
+                toValue: isLTR ? fx : -(contentWidth.current + fx + newDividerWidth),
                 duration: duration || 50 * contentWidth.current,
                 delay: delay,
                 easing: reactNative.Easing.linear,
@@ -94,14 +99,15 @@
         var childrenWithProps = React.cloneElement(children, __assign(__assign({}, childrenProps), { onLayout: measureContentView, ref: function (ref) {
                 return contentRef = ref;
             } }));
-        return React.createElement(reactNative.View, { onLayout: measureContainerView, style: style }, React.createElement(reactNative.ScrollView, { horizontal: true, bounces: false, scrollEnabled: false, showsHorizontalScrollIndicator: false }, React.createElement(reactNative.Animated.View, { style: {
+        return React.createElement(reactNative.View, { onLayout: measureContainerView, style: style }, React.createElement(reactNative.ScrollView, { horizontal: true, bounces: false, scrollEnabled: false, showsHorizontalScrollIndicator: false }, isLTR ? React.createElement(reactNative.Animated.View, { style: {
+                flexDirection: "row",
+                transform: [{ translateX: offsetX.current }]
+            } }, isAutoScrolling && children, isAutoScrolling && React.createElement(reactNative.View, { style: { width: dividerWidth } }), childrenWithProps) : React.createElement(reactNative.Animated.View, { style: {
                 flexDirection: "row",
                 transform: [{ translateX: offsetX.current }]
             } }, childrenWithProps, isAutoScrolling && React.createElement(reactNative.View, { style: { width: dividerWidth } }), isAutoScrolling && children)));
     };
-    var index = React.memo(AutoScrolling);
 
-    return index;
+    return AutoScrolling;
 
 })));
-//# sourceMappingURL=index.js.map

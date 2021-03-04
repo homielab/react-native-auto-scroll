@@ -1,6 +1,6 @@
 {
   "name": "react-native-auto-scrolling",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Auto horizontal scrolling any component",
   "main": "dist/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": {
-    "name": "HackerMeo (minhtcx@gmail.com)",
+    "name": "M (minhtcx@gmail.com)",
     "url": "https://github.com/minhtc"
   },
   "repository": {
@@ -27,10 +27,6 @@
     "performance",
     "marquee"
   ],
-  "peerDependencies": {
-    "react": "16.9.0",
-    "react-native": "^0.61.5"
-  },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^7.1.1",
     "@rollup/plugin-replace": "^2.3.1",

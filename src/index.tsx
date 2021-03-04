@@ -6,7 +6,7 @@ import {
   StyleProp,
   View,
   ViewStyle,
-  LayoutChangeEvent
+  LayoutChangeEvent,
 } from "react-native";
 
 interface Props {
@@ -15,6 +15,7 @@ interface Props {
   endPaddingWidth?: number;
   duration?: number;
   delay?: number;
+  isLTR?: boolean;
 }
 
 const AutoScrolling = ({
@@ -22,7 +23,8 @@ const AutoScrolling = ({
   children,
   endPaddingWidth = 100,
   duration,
-  delay = 0
+  delay = 0,
+  isLTR = false,
 }: Props) => {
   const containerWidth = React.useRef(0);
   const contentWidth = React.useRef(0);
@@ -46,6 +48,7 @@ const AutoScrolling = ({
       setIsAutoScrolling(false);
       return;
     }
+
     if (contentWidth.current === newContentWidth) return;
     contentWidth.current = newContentWidth;
     let newDividerWidth = endPaddingWidth;
@@ -56,13 +59,17 @@ const AutoScrolling = ({
     }
     setDividerWidth(newDividerWidth);
     setIsAutoScrolling(true);
+
+    if (isLTR) {
+      offsetX.current.setValue(-(newContentWidth + newDividerWidth));
+    }
     Animated.loop(
       Animated.timing(offsetX.current, {
-        toValue: -(contentWidth.current + fx + newDividerWidth),
+        toValue: isLTR ? fx : -(contentWidth.current + fx + newDividerWidth),
         duration: duration || 50 * contentWidth.current,
         delay,
         easing: Easing.linear,
-        useNativeDriver: true
+        useNativeDriver: true,
       })
     ).start();
   }
@@ -80,7 +87,7 @@ const AutoScrolling = ({
   const childrenWithProps = React.cloneElement(children, {
     ...childrenProps,
     onLayout: measureContentView,
-    ref: (ref: any) => (contentRef = ref)
+    ref: (ref: any) => (contentRef = ref),
   });
 
   return (
@@ -91,19 +98,32 @@ const AutoScrolling = ({
         scrollEnabled={false}
         showsHorizontalScrollIndicator={false}
       >
-        <Animated.View
-          style={{
-            flexDirection: "row",
-            transform: [{ translateX: offsetX.current }]
-          }}
-        >
-          {childrenWithProps}
-          {isAutoScrolling && <View style={{ width: dividerWidth }} />}
-          {isAutoScrolling && children}
-        </Animated.View>
+        {isLTR ? (
+          <Animated.View
+            style={{
+              flexDirection: "row",
+              transform: [{ translateX: offsetX.current }],
+            }}
+          >
+            {isAutoScrolling && children}
+            {isAutoScrolling && <View style={{ width: dividerWidth }} />}
+            {childrenWithProps}
+          </Animated.View>
+        ) : (
+          <Animated.View
+            style={{
+              flexDirection: "row",
+              transform: [{ translateX: offsetX.current }],
+            }}
+          >
+            {childrenWithProps}
+            {isAutoScrolling && <View style={{ width: dividerWidth }} />}
+            {isAutoScrolling && children}
+          </Animated.View>
+        )}
       </ScrollView>
     </View>
   );
 };
 
-export default React.memo(AutoScrolling);
+export default AutoScrolling;
