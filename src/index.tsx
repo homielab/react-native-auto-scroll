@@ -31,14 +31,19 @@ const AutoScrolling = ({
   const [isAutoScrolling, setIsAutoScrolling] = React.useState(false);
   const [dividerWidth, setDividerWidth] = React.useState(endPaddingWidth);
   const offsetX = React.useRef(new Animated.Value(0));
-  let contentRef: any;
+  const contentRef = React.useRef(0);
+
+  React.useEffect(() => {
+    // Clean up to avoid calling measureContainerView after unmount.
+    return () => (contentRef.current = 0);
+  });
 
   function measureContainerView(event: LayoutChangeEvent) {
     const newContainerWidth = event.nativeEvent.layout.width;
     if (containerWidth.current === newContainerWidth) return;
     containerWidth.current = newContainerWidth;
-    if (!contentRef) return;
-    contentRef.measure((fx: number, fy: number, width: number) => {
+    if (!contentRef.current) return;
+    contentRef.current.measure((fx: number, fy: number, width: number) => {
       checkContent(width, fx);
     });
   }
@@ -87,7 +92,7 @@ const AutoScrolling = ({
   const childrenWithProps = React.cloneElement(children, {
     ...childrenProps,
     onLayout: measureContentView,
-    ref: (ref: any) => (contentRef = ref),
+    ref: (ref: any) => (contentRef.current = ref),
   });
 
   return (
