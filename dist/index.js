@@ -49,13 +49,19 @@
             dividerWidth = _f[0],
             setDividerWidth = _f[1];
         var offsetX = React.useRef(new reactNative.Animated.Value(0));
-        var contentRef;
+        var contentRef = React.useRef(null);
+        React.useEffect(function () {
+            // Clean up to avoid calling measureContainerView after unmount.
+            return function () {
+                contentRef.current = null;
+            };
+        });
         function measureContainerView(event) {
             var newContainerWidth = event.nativeEvent.layout.width;
             if (containerWidth.current === newContainerWidth) return;
             containerWidth.current = newContainerWidth;
-            if (!contentRef) return;
-            contentRef.measure(function (fx, fy, width) {
+            if (!contentRef.current) return;
+            contentRef.current.measure(function (fx, fy, width) {
                 checkContent(width, fx);
             });
         }
@@ -97,7 +103,7 @@
         }
         var childrenProps = children.props;
         var childrenWithProps = React.cloneElement(children, __assign(__assign({}, childrenProps), { onLayout: measureContentView, ref: function (ref) {
-                return contentRef = ref;
+                return contentRef.current = ref;
             } }));
         return React.createElement(reactNative.View, { onLayout: measureContainerView, style: style }, React.createElement(reactNative.ScrollView, { horizontal: true, bounces: false, scrollEnabled: false, showsHorizontalScrollIndicator: false }, isLTR ? React.createElement(reactNative.Animated.View, { style: {
                 flexDirection: "row",

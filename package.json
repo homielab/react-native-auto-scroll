@@ -1,6 +1,6 @@
 {
   "name": "react-native-auto-scrolling",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Auto horizontal scrolling any component",
   "main": "dist/index.js",
   "scripts": {
