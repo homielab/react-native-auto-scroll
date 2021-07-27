@@ -31,11 +31,13 @@ const AutoScrolling = ({
   const [isAutoScrolling, setIsAutoScrolling] = React.useState(false);
   const [dividerWidth, setDividerWidth] = React.useState(endPaddingWidth);
   const offsetX = React.useRef(new Animated.Value(0));
-  const contentRef = React.useRef(0);
+  const contentRef = React.useRef<any>(null);
 
   React.useEffect(() => {
     // Clean up to avoid calling measureContainerView after unmount.
-    return () => (contentRef.current = 0);
+    return () => {
+      contentRef.current = null;
+    };
   });
 
   function measureContainerView(event: LayoutChangeEvent) {
