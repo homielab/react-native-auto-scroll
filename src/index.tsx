@@ -16,6 +16,7 @@ interface Props {
   duration?: number;
   delay?: number;
   isLTR?: boolean;
+  vertical: boolean;
 }
 
 const AutoScrolling = ({
@@ -25,6 +26,7 @@ const AutoScrolling = ({
   duration,
   delay = 0,
   isLTR = false,
+  vertical = false,
 }: Props) => {
   const containerWidth = React.useRef(0);
   const contentWidth = React.useRef(0);
@@ -32,6 +34,10 @@ const AutoScrolling = ({
   const [dividerWidth, setDividerWidth] = React.useState(endPaddingWidth);
   const offsetX = React.useRef(new Animated.Value(0));
   const contentRef = React.useRef<any>(null);
+  const containerHeight = React.useRef(0);
+  const contentHeight = React.useRef(0);
+  const [dividerHeight, setDividerHeight] = React.useState(endPaddingWidth);
+  const offsetY = React.useRef(new Animated.Value(0));
 
   React.useEffect(() => {
     // Clean up to avoid calling measureContainerView after unmount.
@@ -41,53 +47,83 @@ const AutoScrolling = ({
   });
 
   function measureContainerView(event: LayoutChangeEvent) {
-    const newContainerWidth = event.nativeEvent.layout.width;
-    if (containerWidth.current === newContainerWidth) return;
-    containerWidth.current = newContainerWidth;
+    const newContainerSize = vertical ? event.nativeEvent.layout.height : event.nativeEvent.layout.width;
+    if (vertical ? containerHeight.current === newContainerSize : containerWidth.current === newContainerSize) return;
+
+    containerWidth.current = newContainerSize;
+    containerHeight.current = newContainerSize;
     if (!contentRef.current) return;
-    contentRef.current.measure((fx: number, fy: number, width: number) => {
-      checkContent(width, fx);
+    contentRef.current.measure((fx: number, fy: number, width: number, height: number) => {
+      vertical ? checkContent(height, fy) : checkContent(width, fx);
     });
   }
 
-  function checkContent(newContentWidth: number, fx: number) {
-    if (!newContentWidth) {
+  function checkContent(newContentSize: number, fx: number) {
+    if (!newContentSize) {
       setIsAutoScrolling(false);
       return;
     }
 
-    if (contentWidth.current === newContentWidth) return;
-    contentWidth.current = newContentWidth;
-    let newDividerWidth = endPaddingWidth;
-    if (contentWidth.current < containerWidth.current) {
-      if (endPaddingWidth < containerWidth.current - contentWidth.current) {
-        newDividerWidth = containerWidth.current - contentWidth.current;
+    if (vertical ? contentHeight.current === newContentSize : contentWidth.current === newContentSize) return;
+    contentWidth.current = newContentSize;
+    contentHeight.current = newContentSize;
+
+    let newDividerSize = endPaddingWidth;
+    if (vertical ? contentHeight.current < containerHeight.current : contentWidth.current < containerWidth.current) {
+      if (vertical ? endPaddingWidth < containerHeight.current - contentHeight.current : endPaddingWidth < containerWidth.current - contentWidth.current) {
+        newDividerSize = vertical ? containerHeight.current - contentHeight.current : containerWidth.current - contentWidth.current;
       }
     }
-    setDividerWidth(newDividerWidth);
+    vertical ? setDividerHeight(newDividerSize) : setDividerWidth(newDividerSize);
     setIsAutoScrolling(true);
 
     if (isLTR) {
-      offsetX.current.setValue(-(newContentWidth + newDividerWidth));
+      if (vertical) {
+        offsetY.current.setValue(-(newContentSize + newDividerSize));
+      }
+      else {
+        offsetX.current.setValue(-(newContentSize + newDividerSize));
+      }
     }
     Animated.loop(
-      Animated.timing(offsetX.current, {
-        toValue: isLTR ? fx : -(contentWidth.current + fx + newDividerWidth),
-        duration: duration || 50 * contentWidth.current,
+      vertical ? Animated.timing(offsetY.current, {
+        toValue: isLTR ? fx : -(contentHeight.current + fx + newDividerSize),
+        duration: duration || 50 * contentHeight.current,
         delay,
         easing: Easing.linear,
         useNativeDriver: true,
-      })
+      }) :
+
+        Animated.timing(offsetX.current, {
+          toValue: isLTR ? fx : -(contentWidth.current + fx + newDividerSize),
+          duration: duration || 50 * contentWidth.current,
+          delay,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        })
     ).start();
   }
 
   function measureContentView(event: LayoutChangeEvent) {
-    const { width, x } = event.nativeEvent.layout;
-    if (!containerWidth.current || width === contentWidth.current) return;
-    offsetX.current.stopAnimation();
-    offsetX.current.setValue(0);
-    offsetX.current.setOffset(0);
-    checkContent(width, x);
+    const { width, x, y, height } = event.nativeEvent.layout;
+    if (!vertical) {
+      if (!containerWidth.current || width === contentWidth.current)
+        return;
+      offsetX.current.stopAnimation();
+      offsetX.current.setValue(0);
+      offsetX.current.setOffset(0);
+      checkContent(width, x);
+
+    }
+    else {
+
+      if (!containerHeight.current || height === contentHeight.current)
+        return;
+      offsetY.current.stopAnimation();
+      offsetY.current.setValue(0);
+      offsetY.current.setOffset(0);
+      checkContent(height, y);
+    }
   }
 
   const childrenProps = children.props;
@@ -108,23 +144,23 @@ const AutoScrolling = ({
         {isLTR ? (
           <Animated.View
             style={{
-              flexDirection: "row",
-              transform: [{ translateX: offsetX.current }],
+              flexDirection: vertical ? 'column' : 'row',
+              transform: vertical ? [{ translateY: offsetY.current }] : [{ translateX: offsetX.current }],
             }}
           >
             {isAutoScrolling && children}
-            {isAutoScrolling && <View style={{ width: dividerWidth }} />}
+            {isAutoScrolling && <View style={vertical ? { height: dividerHeight } : { width: dividerWidth }} />}
             {childrenWithProps}
           </Animated.View>
         ) : (
           <Animated.View
             style={{
-              flexDirection: "row",
-              transform: [{ translateX: offsetX.current }],
+              flexDirection: vertical ? 'column' : 'row',
+              transform: vertical ? [{ translateY: offsetY.current }] : [{ translateX: offsetX.current }],
             }}
           >
             {childrenWithProps}
-            {isAutoScrolling && <View style={{ width: dividerWidth }} />}
+            {isAutoScrolling && <View style={vertical ? { height: dividerHeight } : { width: dividerWidth }} />}
             {isAutoScrolling && children}
           </Animated.View>
         )}
