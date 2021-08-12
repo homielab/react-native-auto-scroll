@@ -21,6 +21,7 @@ _or_
 | **`duration`**        | Time to finish a round (ms).                        | \_      |
 | **`delay`**           | Delay time before start auto scroll animation (ms). | 1000    |
 | **`isLTR`**           | Is Left to Right?                                   | false   |
+| **`vertical`**        | Vertical Scrolling                                  | false   |
 
 ## Example:
 
@@ -36,6 +37,7 @@ Source:
 import * as React from "react";
 import { Text, View, Image, StyleSheet } from "react-native";
 import AutoScrolling from "./AutoScrolling";
+
 
 export default class App extends React.Component {
   render() {
