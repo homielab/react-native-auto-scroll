@@ -25,11 +25,11 @@ _or_
 
 ## Example:
 
-![Auto SCrolling Example](https://github.com/minhtc/react-native-auto-scrolling/raw/master/screenshots/auto-scrolling.gif "Auto Scrolling Example")
+![Auto SCrolling Example](https://github.com/minhtc/react-native-auto-scrolling/raw/main/screenshots/auto-scrolling.gif "Auto Scrolling Example")
 
 Expo: https://snack.expo.io/@minhtc/react-native-auto-scrolling-demo
 
-Example: https://github.com/minhtc/react-native-auto-scrolling/tree/master/Example
+Example: https://github.com/minhtc/react-native-auto-scrolling/tree/main/Example
 
 Source:
 
