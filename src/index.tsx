@@ -16,7 +16,7 @@ interface Props {
   duration?: number;
   delay?: number;
   isLTR?: boolean;
-  vertical: boolean;
+  isVertical: boolean;
 }
 
 const AutoScrolling = ({
@@ -26,7 +26,7 @@ const AutoScrolling = ({
   duration,
   delay = 0,
   isLTR = false,
-  vertical = false,
+  isVertical = false,
 }: Props) => {
   const containerWidth = React.useRef(0);
   const contentWidth = React.useRef(0);
@@ -47,15 +47,24 @@ const AutoScrolling = ({
   });
 
   function measureContainerView(event: LayoutChangeEvent) {
-    const newContainerSize = vertical ? event.nativeEvent.layout.height : event.nativeEvent.layout.width;
-    if (vertical ? containerHeight.current === newContainerSize : containerWidth.current === newContainerSize) return;
+    const newContainerSize = isVertical
+      ? event.nativeEvent.layout.height
+      : event.nativeEvent.layout.width;
+    if (
+      isVertical
+        ? containerHeight.current === newContainerSize
+        : containerWidth.current === newContainerSize
+    )
+      return;
 
     containerWidth.current = newContainerSize;
     containerHeight.current = newContainerSize;
     if (!contentRef.current) return;
-    contentRef.current.measure((fx: number, fy: number, width: number, height: number) => {
-      vertical ? checkContent(height, fy) : checkContent(width, fx);
-    });
+    contentRef.current.measure(
+      (fx: number, fy: number, width: number, height: number) => {
+        isVertical ? checkContent(height, fy) : checkContent(width, fx);
+      }
+    );
   }
 
   function checkContent(newContentSize: number, fx: number) {
@@ -64,61 +73,74 @@ const AutoScrolling = ({
       return;
     }
 
-    if (vertical ? contentHeight.current === newContentSize : contentWidth.current === newContentSize) return;
+    if (
+      isVertical
+        ? contentHeight.current === newContentSize
+        : contentWidth.current === newContentSize
+    )
+      return;
     contentWidth.current = newContentSize;
     contentHeight.current = newContentSize;
 
     let newDividerSize = endPaddingWidth;
-    if (vertical ? contentHeight.current < containerHeight.current : contentWidth.current < containerWidth.current) {
-      if (vertical ? endPaddingWidth < containerHeight.current - contentHeight.current : endPaddingWidth < containerWidth.current - contentWidth.current) {
-        newDividerSize = vertical ? containerHeight.current - contentHeight.current : containerWidth.current - contentWidth.current;
+    if (
+      isVertical
+        ? contentHeight.current < containerHeight.current
+        : contentWidth.current < containerWidth.current
+    ) {
+      if (
+        isVertical
+          ? endPaddingWidth < containerHeight.current - contentHeight.current
+          : endPaddingWidth < containerWidth.current - contentWidth.current
+      ) {
+        newDividerSize = isVertical
+          ? containerHeight.current - contentHeight.current
+          : containerWidth.current - contentWidth.current;
       }
     }
-    vertical ? setDividerHeight(newDividerSize) : setDividerWidth(newDividerSize);
+    isVertical
+      ? setDividerHeight(newDividerSize)
+      : setDividerWidth(newDividerSize);
     setIsAutoScrolling(true);
 
     if (isLTR) {
-      if (vertical) {
+      if (isVertical) {
         offsetY.current.setValue(-(newContentSize + newDividerSize));
-      }
-      else {
+      } else {
         offsetX.current.setValue(-(newContentSize + newDividerSize));
       }
     }
     Animated.loop(
-      vertical ? Animated.timing(offsetY.current, {
-        toValue: isLTR ? fx : -(contentHeight.current + fx + newDividerSize),
-        duration: duration || 50 * contentHeight.current,
-        delay,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }) :
-
-        Animated.timing(offsetX.current, {
-          toValue: isLTR ? fx : -(contentWidth.current + fx + newDividerSize),
-          duration: duration || 50 * contentWidth.current,
-          delay,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        })
+      isVertical
+        ? Animated.timing(offsetY.current, {
+            toValue: isLTR
+              ? fx
+              : -(contentHeight.current + fx + newDividerSize),
+            duration: duration || 50 * contentHeight.current,
+            delay,
+            easing: Easing.linear,
+            useNativeDriver: true,
+          })
+        : Animated.timing(offsetX.current, {
+            toValue: isLTR ? fx : -(contentWidth.current + fx + newDividerSize),
+            duration: duration || 50 * contentWidth.current,
+            delay,
+            easing: Easing.linear,
+            useNativeDriver: true,
+          })
     ).start();
   }
 
   function measureContentView(event: LayoutChangeEvent) {
     const { width, x, y, height } = event.nativeEvent.layout;
-    if (!vertical) {
-      if (!containerWidth.current || width === contentWidth.current)
-        return;
+    if (!isVertical) {
+      if (!containerWidth.current || width === contentWidth.current) return;
       offsetX.current.stopAnimation();
       offsetX.current.setValue(0);
       offsetX.current.setOffset(0);
       checkContent(width, x);
-
-    }
-    else {
-
-      if (!containerHeight.current || height === contentHeight.current)
-        return;
+    } else {
+      if (!containerHeight.current || height === contentHeight.current) return;
       offsetY.current.stopAnimation();
       offsetY.current.setValue(0);
       offsetY.current.setOffset(0);
@@ -133,6 +155,20 @@ const AutoScrolling = ({
     ref: (ref: any) => (contentRef.current = ref),
   });
 
+  const animatedViewStyle = isVertical
+    ? {
+        flexDirection: "column",
+        transform: [{ translateY: offsetY.current }],
+      }
+    : {
+        flexDirection: "row",
+        transform: [{ translateX: offsetX.current }],
+      };
+
+  const viewStyle = isVertical
+    ? { height: dividerHeight }
+    : { width: dividerWidth };
+
   return (
     <View onLayout={measureContainerView} style={style}>
       <ScrollView
@@ -142,25 +178,15 @@ const AutoScrolling = ({
         showsHorizontalScrollIndicator={false}
       >
         {isLTR ? (
-          <Animated.View
-            style={{
-              flexDirection: vertical ? 'column' : 'row',
-              transform: vertical ? [{ translateY: offsetY.current }] : [{ translateX: offsetX.current }],
-            }}
-          >
+          <Animated.View style={animatedViewStyle}>
             {isAutoScrolling && children}
-            {isAutoScrolling && <View style={vertical ? { height: dividerHeight } : { width: dividerWidth }} />}
+            {isAutoScrolling && <View style={viewStyle} />}
             {childrenWithProps}
           </Animated.View>
         ) : (
-          <Animated.View
-            style={{
-              flexDirection: vertical ? 'column' : 'row',
-              transform: vertical ? [{ translateY: offsetY.current }] : [{ translateX: offsetX.current }],
-            }}
-          >
+          <Animated.View style={animatedViewStyle}>
             {childrenWithProps}
-            {isAutoScrolling && <View style={vertical ? { height: dividerHeight } : { width: dividerWidth }} />}
+            {isAutoScrolling && <View style={viewStyle} />}
             {isAutoScrolling && children}
           </Animated.View>
         )}

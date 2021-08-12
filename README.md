@@ -21,6 +21,7 @@ _or_
 | **`duration`**        | Time to finish a round (ms).                        | \_      |
 | **`delay`**           | Delay time before start auto scroll animation (ms). | 1000    |
 | **`isLTR`**           | Is Left to Right?                                   | false   |
+| **`isVertical`**      | Is Vertical?                                        | false   |
 
 ## Example:
 
