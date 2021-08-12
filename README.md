@@ -1,8 +1,8 @@
 # react-native-auto-scrolling
 
-Auto horizontal scrolling , You just need wrap the component between `<AutoScrolling>`, it is the same like `marquee` tag in html.
+Auto horizontal scrolling. You only need to wrap the component between `<AutoScrolling>`, it is the same as the `<marquee>` tag in HTML.
 
-There are many solutions, but I prefer this one for the best performance. The animations are using `useNativeDriver`, so they will be send to native and will be perform on the UI thread instead of JS thread.
+There are many solutions, but I prefer this one for the best performance. The animations are using `useNativeDriver`, so they will be sent to native and performed on the UI thread instead of the JS thread.
 
 ## Installation
 
