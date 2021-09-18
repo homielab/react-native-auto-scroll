@@ -39,17 +39,25 @@
             _c = _a.delay,
             delay = _c === void 0 ? 0 : _c,
             _d = _a.isLTR,
-            isLTR = _d === void 0 ? false : _d;
+            isLTR = _d === void 0 ? false : _d,
+            _e = _a.isVertical,
+            isVertical = _e === void 0 ? false : _e;
         var containerWidth = React.useRef(0);
         var contentWidth = React.useRef(0);
-        var _e = React.useState(false),
-            isAutoScrolling = _e[0],
-            setIsAutoScrolling = _e[1];
-        var _f = React.useState(endPaddingWidth),
-            dividerWidth = _f[0],
-            setDividerWidth = _f[1];
+        var _f = React.useState(false),
+            isAutoScrolling = _f[0],
+            setIsAutoScrolling = _f[1];
+        var _g = React.useState(endPaddingWidth),
+            dividerWidth = _g[0],
+            setDividerWidth = _g[1];
         var offsetX = React.useRef(new reactNative.Animated.Value(0));
         var contentRef = React.useRef(null);
+        var containerHeight = React.useRef(0);
+        var contentHeight = React.useRef(0);
+        var _h = React.useState(endPaddingWidth),
+            dividerHeight = _h[0],
+            setDividerHeight = _h[1];
+        var offsetY = React.useRef(new reactNative.Animated.Value(0));
         React.useEffect(function () {
             // Clean up to avoid calling measureContainerView after unmount.
             return function () {
@@ -57,34 +65,46 @@
             };
         });
         function measureContainerView(event) {
-            var newContainerWidth = event.nativeEvent.layout.width;
-            if (containerWidth.current === newContainerWidth) return;
-            containerWidth.current = newContainerWidth;
+            var newContainerSize = isVertical ? event.nativeEvent.layout.height : event.nativeEvent.layout.width;
+            if (isVertical ? containerHeight.current === newContainerSize : containerWidth.current === newContainerSize) return;
+            containerWidth.current = newContainerSize;
+            containerHeight.current = newContainerSize;
             if (!contentRef.current) return;
-            contentRef.current.measure(function (fx, fy, width) {
-                checkContent(width, fx);
+            contentRef.current.measure(function (fx, fy, width, height) {
+                isVertical ? checkContent(height, fy) : checkContent(width, fx);
             });
         }
-        function checkContent(newContentWidth, fx) {
-            if (!newContentWidth) {
+        function checkContent(newContentSize, fx) {
+            if (!newContentSize) {
                 setIsAutoScrolling(false);
                 return;
             }
-            if (contentWidth.current === newContentWidth) return;
-            contentWidth.current = newContentWidth;
-            var newDividerWidth = endPaddingWidth;
-            if (contentWidth.current < containerWidth.current) {
-                if (endPaddingWidth < containerWidth.current - contentWidth.current) {
-                    newDividerWidth = containerWidth.current - contentWidth.current;
+            if (isVertical ? contentHeight.current === newContentSize : contentWidth.current === newContentSize) return;
+            contentWidth.current = newContentSize;
+            contentHeight.current = newContentSize;
+            var newDividerSize = endPaddingWidth;
+            if (isVertical ? contentHeight.current < containerHeight.current : contentWidth.current < containerWidth.current) {
+                if (isVertical ? endPaddingWidth < containerHeight.current - contentHeight.current : endPaddingWidth < containerWidth.current - contentWidth.current) {
+                    newDividerSize = isVertical ? containerHeight.current - contentHeight.current : containerWidth.current - contentWidth.current;
                 }
             }
-            setDividerWidth(newDividerWidth);
+            isVertical ? setDividerHeight(newDividerSize) : setDividerWidth(newDividerSize);
             setIsAutoScrolling(true);
             if (isLTR) {
-                offsetX.current.setValue(-(newContentWidth + newDividerWidth));
+                if (isVertical) {
+                    offsetY.current.setValue(-(newContentSize + newDividerSize));
+                } else {
+                    offsetX.current.setValue(-(newContentSize + newDividerSize));
+                }
             }
-            reactNative.Animated.loop(reactNative.Animated.timing(offsetX.current, {
-                toValue: isLTR ? fx : -(contentWidth.current + fx + newDividerWidth),
+            reactNative.Animated.loop(isVertical ? reactNative.Animated.timing(offsetY.current, {
+                toValue: isLTR ? fx : -(contentHeight.current + fx + newDividerSize),
+                duration: duration || 50 * contentHeight.current,
+                delay: delay,
+                easing: reactNative.Easing.linear,
+                useNativeDriver: true
+            }) : reactNative.Animated.timing(offsetX.current, {
+                toValue: isLTR ? fx : -(contentWidth.current + fx + newDividerSize),
                 duration: duration || 50 * contentWidth.current,
                 delay: delay,
                 easing: reactNative.Easing.linear,
@@ -94,24 +114,36 @@
         function measureContentView(event) {
             var _a = event.nativeEvent.layout,
                 width = _a.width,
-                x = _a.x;
-            if (!containerWidth.current || width === contentWidth.current) return;
-            offsetX.current.stopAnimation();
-            offsetX.current.setValue(0);
-            offsetX.current.setOffset(0);
-            checkContent(width, x);
+                x = _a.x,
+                y = _a.y,
+                height = _a.height;
+            if (!isVertical) {
+                if (!containerWidth.current || width === contentWidth.current) return;
+                offsetX.current.stopAnimation();
+                offsetX.current.setValue(0);
+                offsetX.current.setOffset(0);
+                checkContent(width, x);
+            } else {
+                if (!containerHeight.current || height === contentHeight.current) return;
+                offsetY.current.stopAnimation();
+                offsetY.current.setValue(0);
+                offsetY.current.setOffset(0);
+                checkContent(height, y);
+            }
         }
         var childrenProps = children.props;
         var childrenWithProps = React.cloneElement(children, __assign(__assign({}, childrenProps), { onLayout: measureContentView, ref: function (ref) {
                 return contentRef.current = ref;
             } }));
-        return React.createElement(reactNative.View, { onLayout: measureContainerView, style: style }, React.createElement(reactNative.ScrollView, { horizontal: true, bounces: false, scrollEnabled: false, showsHorizontalScrollIndicator: false }, isLTR ? React.createElement(reactNative.Animated.View, { style: {
-                flexDirection: "row",
-                transform: [{ translateX: offsetX.current }]
-            } }, isAutoScrolling && children, isAutoScrolling && React.createElement(reactNative.View, { style: { width: dividerWidth } }), childrenWithProps) : React.createElement(reactNative.Animated.View, { style: {
-                flexDirection: "row",
-                transform: [{ translateX: offsetX.current }]
-            } }, childrenWithProps, isAutoScrolling && React.createElement(reactNative.View, { style: { width: dividerWidth } }), isAutoScrolling && children)));
+        var animatedViewStyle = isVertical ? {
+            flexDirection: "column",
+            transform: [{ translateY: offsetY.current }]
+        } : {
+            flexDirection: "row",
+            transform: [{ translateX: offsetX.current }]
+        };
+        var viewStyle = isVertical ? { height: dividerHeight } : { width: dividerWidth };
+        return React.createElement(reactNative.View, { onLayout: measureContainerView, style: style }, React.createElement(reactNative.ScrollView, { horizontal: true, bounces: false, scrollEnabled: false, showsHorizontalScrollIndicator: false }, isLTR ? React.createElement(reactNative.Animated.View, { style: animatedViewStyle }, isAutoScrolling && children, isAutoScrolling && React.createElement(reactNative.View, { style: viewStyle }), childrenWithProps) : React.createElement(reactNative.Animated.View, { style: animatedViewStyle }, childrenWithProps, isAutoScrolling && React.createElement(reactNative.View, { style: viewStyle }), isAutoScrolling && children)));
     };
 
     return AutoScrolling;
