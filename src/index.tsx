@@ -177,19 +177,11 @@ const AutoScrolling = ({
         scrollEnabled={false}
         showsHorizontalScrollIndicator={false}
       >
-        {isLTR ? (
-          <Animated.View style={animatedViewStyle}>
-            {isAutoScrolling && children}
-            {isAutoScrolling && <View style={viewStyle} />}
-            {childrenWithProps}
-          </Animated.View>
-        ) : (
-          <Animated.View style={animatedViewStyle}>
-            {childrenWithProps}
-            {isAutoScrolling && <View style={viewStyle} />}
-            {isAutoScrolling && children}
-          </Animated.View>
-        )}
+        <Animated.View style={animatedViewStyle}>
+          {childrenWithProps}
+          {isAutoScrolling && <View style={viewStyle} />}
+          {isAutoScrolling && children}
+        </Animated.View>
       </ScrollView>
     </View>
   );
