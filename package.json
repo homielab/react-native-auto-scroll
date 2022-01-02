@@ -1,6 +1,6 @@
 {
   "name": "@homielab/react-native-auto-scroll",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Auto horizontal scroll any component",
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
@@ -9,7 +9,7 @@
     "build": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc",
     "build:cjs": "tsc --module commonjs --outDir lib/cjs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\""
   },
   "files": [
     "/lib"
