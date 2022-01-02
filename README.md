@@ -1,5 +1,7 @@
 # @homielab/react-native-auto-scroll
 
+[![npm version](https://badge.fury.io/js/@homielab%2Freact-native-auto-scroll.svg)](https://badge.fury.io/js/@homielab%2Freact-native-auto-scroll) [![CircleCI](https://circleci.com/gh/homielab/react-native-auto-scroll/tree/main.svg?style=svg)](https://circleci.com/gh/homielab/react-native-auto-scroll/tree/main) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/homielab/react-native-auto-scroll/graphs/contributors)
+
 Auto horizontal scroll. You only need to wrap the component between `<AutoScroll>`, it is the same as the `<marquee>` tag in HTML.
 
 There are many solutions, but I prefer this one for the best performance. The animations are using `useNativeDriver`, so they will be sent to native and performed on the UI thread instead of the JS thread.
