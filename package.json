@@ -1,6 +1,6 @@
 {
   "name": "@homielab/react-native-auto-scroll",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Auto horizontal scroll any component",
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
