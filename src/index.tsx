@@ -83,7 +83,7 @@ const AutoScrolling = ({
           duration: duration || 50 * contentWidth.current,
           delay,
           easing: Easing.linear,
-          useNativeDriver: Platform.os === "web" ? false : true,
+          useNativeDriver: Platform.OS === "web" ? false : true,
         })
       ).start();
     },
