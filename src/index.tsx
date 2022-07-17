@@ -7,6 +7,7 @@ import {
   StyleProp,
   View,
   ViewStyle,
+    Platform,
 } from "react-native";
 
 interface Props {
@@ -82,7 +83,7 @@ const AutoScrolling = ({
           duration: duration || 50 * contentWidth.current,
           delay,
           easing: Easing.linear,
-          useNativeDriver: true,
+          useNativeDriver: Platform.os === "web" ? false : true,
         })
       ).start();
     },
