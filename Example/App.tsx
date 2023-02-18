@@ -1,4 +1,5 @@
 import AutoScroll from "@homielab/react-native-auto-scroll";
+import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -45,6 +46,7 @@ export default class App extends React.Component {
         <TouchableOpacity onPress={this.updateText} style={styles.button}>
           <Text style={styles.buttonText}>Change Birthday Wish</Text>
         </TouchableOpacity>
+        <StatusBar style="auto" />
       </View>
     );
   }
