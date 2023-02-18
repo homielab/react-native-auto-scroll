@@ -3,11 +3,11 @@ import {
   Animated,
   Easing,
   LayoutChangeEvent,
+  Platform,
   ScrollView,
   StyleProp,
   View,
   ViewStyle,
-    Platform,
 } from "react-native";
 
 interface Props {
@@ -83,7 +83,7 @@ const AutoScrolling = ({
           duration: duration || 50 * contentWidth.current,
           delay,
           easing: Easing.linear,
-          useNativeDriver: Platform.OS === "web" ? false : true,
+          useNativeDriver: Platform.OS !== "web",
         })
       ).start();
     },
