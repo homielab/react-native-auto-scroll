@@ -34,12 +34,6 @@ const AutoScrolling = ({
   const offsetX = React.useRef(new Animated.Value(0));
   const contentRef = React.useRef<any>(null);
 
-  React.useEffect(() => {
-    return () => {
-      contentRef.current = null;
-    };
-  });
-
   const measureContainerView = React.useCallback(
     ({
       nativeEvent: {
