@@ -26,7 +26,7 @@ _or_
 
 ## Example:
 
-![Auto Scroll Example](https://github.com/homielab/react-native-auto-scroll/raw/main/screenshots/auto-scrolling.gif "Auto Scroll Example")
+![Auto Scroll Example](https://github.com/homielab/react-native-auto-scroll/raw/main/screenshots/auto-scrolling.gif 'Auto Scroll Example')
 
 Expo: https://snack.expo.io/@minhtc/react-native-auto-scrolling-demo
 
@@ -35,9 +35,9 @@ Example: https://github.com/homielab/react-native-auto-scroll/tree/main/Example
 Source:
 
 ```js
-import * as React from "react";
-import { Text, View, Image, StyleSheet } from "react-native";
-import AutoScroll from "@homielab/react-native-auto-scroll";
+import * as React from 'react';
+import { Text, View, Image, StyleSheet } from 'react-native';
+import AutoScroll from '@homielab/react-native-auto-scroll';
 
 export default class App extends React.Component {
   render() {
@@ -48,7 +48,7 @@ export default class App extends React.Component {
             style={styles.image}
             delay={0}
             duration={6000}
-            source={require("./assets/merry-christmas-png.png")}
+            source={require('./assets/merry-christmas-png.png')}
           />
         </AutoScroll>
         <AutoScroll style={styles.scrolling2} endPadding={50}>
@@ -62,9 +62,9 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
   },
   image: {
     width: 200,
@@ -76,16 +76,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   scrolling2: {
-    backgroundColor: "red",
+    backgroundColor: 'red',
     width: 400,
     padding: 10,
     marginBottom: 10,
   },
   welcome: {
-    color: "white",
+    color: 'white',
     fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
     margin: 10,
   },
 });

@@ -1,28 +1,26 @@
 {
-  "name": "example",
+  "name": "@homielab/react-native-auto-scroll-example",
   "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "index.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "export NODE_OPTIONS=--openssl-legacy-provider && expo start --web"
+    "web": "expo start --web"
   },
   "dependencies": {
-    "@homielab/react-native-auto-scroll": "^0.0.8",
-    "expo": "~47.0.12",
-    "expo-status-bar": "~1.4.2",
-    "react": "18.1.0",
-    "react-dom": "18.1.0",
-    "react-native": "0.70.5",
-    "react-native-web": "~0.18.9",
-    "@expo/webpack-config": "^0.17.2"
+    "@expo/metro-runtime": "~5.0.4",
+    "expo": "~53.0.20",
+    "expo-status-bar": "~2.2.3",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-native": "0.79.5",
+    "react-native-web": "~0.20.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@types/react": "~18.0.14",
-    "@types/react-native": "~0.70.6",
-    "typescript": "^4.6.3"
+    "@babel/core": "^7.20.0",
+    "react-native-builder-bob": "^0.40.13",
+    "react-native-monorepo-config": "^0.1.9"
   },
   "private": true
 }

@@ -1,56 +1,58 @@
-import * as React from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Animated,
   Easing,
-  LayoutChangeEvent,
+  type LayoutChangeEvent,
   Platform,
   ScrollView,
-  StyleProp,
+  type StyleProp,
+  StyleSheet,
   View,
-  ViewStyle,
-} from "react-native";
+  type ViewProps,
+  type ViewStyle,
+} from 'react-native';
 
-interface Props {
-  children: React.ReactElement<any>;
+interface AutoScrollingProps {
+  children: React.ReactElement<ViewProps & { ref?: React.Ref<View> }>;
   style?: StyleProp<ViewStyle>;
   endPaddingWidth?: number;
   duration?: number;
   delay?: number;
-  isLTR?: boolean;
+  isLTR?: boolean; // default is false, which means RTL
 }
 
-const AutoScrolling = ({
+const useNativeDriver = Platform.OS !== 'web';
+
+const AutoScrolling: React.FC<AutoScrollingProps> = ({
   style,
   children,
   endPaddingWidth = 100,
   duration,
   delay = 0,
   isLTR = false,
-}: Props) => {
-  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = React.useState(false);
-  const [dividerWidth, setDividerWidth] = React.useState(endPaddingWidth);
-  const containerWidth = React.useRef(0);
-  const contentWidth = React.useRef(0);
-  const offsetX = React.useRef(new Animated.Value(0));
-  const contentRef = React.useRef<any>(null);
+}) => {
+  const isMounted = useRef(true);
+  const [dividerWidth, setDividerWidth] = useState(endPaddingWidth);
+  const containerWidth = useRef(0);
+  const contentWidth = useRef(0);
+  const offsetX = useRef(new Animated.Value(0));
+  const contentRef = useRef<View>(null);
+  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(false);
 
-  const measureContainerView = React.useCallback(
-    ({
-      nativeEvent: {
-        layout: { width },
-      },
-    }: LayoutChangeEvent) => {
-      if (containerWidth.current === width) return;
-      containerWidth.current = width;
-      if (!contentRef.current) return;
-      contentRef.current.measure((fx: number, _fy: number, width: number) => {
-        checkContent(width, fx);
-      });
-    },
-    []
-  );
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
-  const checkContent = React.useCallback(
+  const checkContent = useCallback(
     (newContentWidth: number, fx: number) => {
       if (!newContentWidth) {
         setIsAutoScrollEnabled(false);
@@ -59,6 +61,8 @@ const AutoScrolling = ({
 
       if (contentWidth.current === newContentWidth) return;
       contentWidth.current = newContentWidth;
+
+      // Calculate divider width
       let newDividerWidth = endPaddingWidth;
       if (contentWidth.current < containerWidth.current) {
         if (endPaddingWidth < containerWidth.current - contentWidth.current) {
@@ -68,57 +72,82 @@ const AutoScrolling = ({
       setDividerWidth(newDividerWidth);
       setIsAutoScrollEnabled(true);
 
-      if (isLTR) {
-        offsetX.current.setValue(-(newContentWidth + newDividerWidth));
-      }
-      Animated.loop(
+      // Compute scroll range
+      const checkPoint = -(contentWidth.current + fx + newDividerWidth);
+      const startValue = isLTR ? checkPoint : fx;
+      const endValue = isLTR ? fx : checkPoint;
+      offsetX.current.setValue(startValue);
+
+      // Calculate duration based on distance and speed
+      const scrollDuration =
+        duration || Math.max(3000, 50 * contentWidth.current);
+
+      // Recursive scroll function for smooth looping
+      const scroll = (inital = true) => {
+        if (!isMounted.current) return;
         Animated.timing(offsetX.current, {
-          toValue: isLTR ? fx : -(contentWidth.current + fx + newDividerWidth),
-          duration: duration || 50 * contentWidth.current,
-          delay,
+          toValue: endValue,
+          duration: scrollDuration,
+          delay: inital ? delay : 0,
           easing: Easing.linear,
-          useNativeDriver: Platform.OS !== "web",
-        })
-      ).start();
+          useNativeDriver,
+        }).start(() => {
+          if (!isMounted.current) return;
+          offsetX.current.setValue(startValue);
+          scroll(false);
+        });
+      };
+
+      scroll(true);
     },
-    []
+    [endPaddingWidth, isLTR, duration, delay]
   );
 
-  const childrenCloned = React.useMemo(
+  const childrenCloned = useMemo(
     () =>
       React.cloneElement(children, {
         ...children.props,
-        onLayout: ({
-          nativeEvent: {
-            layout: { width, x },
-          },
-        }: LayoutChangeEvent) => {
-          if (!containerWidth.current || width === contentWidth.current) return;
-          offsetX.current.stopAnimation();
-          offsetX.current.setValue(0);
-          offsetX.current.setOffset(0);
-          checkContent(width, x);
+        onLayout: ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
+          if (!containerWidth.current || layout.width === contentWidth.current)
+            return;
+          checkContent(layout.width, layout.x);
         },
-        ref: (ref: any) => (contentRef.current = ref),
+        ref: (ref: View) => {
+          contentRef.current = ref;
+        },
       }),
-    [children]
+    [children, checkContent]
   );
 
+  const animateStyle = {
+    transform: [
+      {
+        translateX: offsetX.current,
+      },
+    ],
+  };
+
   return (
-    <View onLayout={measureContainerView} style={style}>
+    <View
+      onLayout={({ nativeEvent: { layout } }: LayoutChangeEvent) => {
+        if (containerWidth.current === layout.width) return;
+        containerWidth.current = layout.width;
+        contentRef.current?.measure(
+          (fx: number, _fy: number, width: number) => {
+            checkContent(width, fx);
+          }
+        );
+      }}
+      style={style}
+    >
       <ScrollView
-        horizontal={true}
+        horizontal
         bounces={false}
         scrollEnabled={false}
         showsHorizontalScrollIndicator={false}
       >
-        <Animated.View
-          style={[
-            { flexDirection: "row" },
-            { transform: [{ translateX: offsetX.current }] },
-          ]}
-        >
-          {childrenCloned}
+        <Animated.View style={[styles.container, animateStyle]}>
+          <View>{childrenCloned}</View>
           {isAutoScrollEnabled && (
             <>
               <View style={{ width: dividerWidth }} />
@@ -130,5 +159,11 @@ const AutoScrolling = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+  },
+});
 
 export default React.memo(AutoScrolling);
