@@ -47,14 +47,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/homielab/homielab-react-native-auto-scroll.git"
+    "url": "git+https://github.com/homielab/react-native-auto-scroll.git"
   },
   "author": "homielab <contact@homielab.com> (https://github.com/homielab)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/homielab/homielab-react-native-auto-scroll/issues"
+    "url": "https://github.com/homielab/react-native-auto-scroll/issues"
   },
-  "homepage": "https://github.com/homielab/homielab-react-native-auto-scroll#readme",
+  "homepage": "https://github.com/homielab/react-native-auto-scroll#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
