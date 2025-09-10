@@ -106,8 +106,8 @@ const AutoScroll: React.FC<AutoScrollProps> = ({
           delay: inital ? delay : 0,
           easing: Easing.linear,
           useNativeDriver: USE_NATIVE_DRIVER,
-        }).start(() => {
-          if (!isMountedRef.current) return;
+        }).start(({ finished }) => {
+          if (!isMountedRef.current || !finished) return;
           offsetXRef.current.setValue(startValue);
           scroll(false);
         });
